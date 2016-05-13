@@ -109,11 +109,11 @@ func main() {
 		// once you've added all the columns in, close the header
 		table += "</thead><tbody>"
 		// columns
-	//	var AVG(age) int
+		var AVGage int
 		for rows.Next() {
 			// rows.Scan() // put columns here prefaced with &
-			//rows.Scan(&AVG(age))
-			table += "<tr><td>" + strconv(AVG(age)) + "</td></tr>" // <--- EDIT THIS LINE
+			rows.Scan(&AVGage)
+			table += "<tr><td>" + strconv.itoa(AVGage) + "</td></tr>" // <--- EDIT THIS LINE
 		}
 		// finally, close out the body and table
 		table += "</tbody></table>"
