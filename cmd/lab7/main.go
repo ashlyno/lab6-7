@@ -83,7 +83,7 @@ func main() {
 			// preface each variable with &
 			rows.Scan(&dogId, &breed, &age, &name) // <--- EDIT THIS LINE
 			// can't combine ints and strings in Go. Use strconv.Itoa(int) instead
-			table += "<tr><td>" + strconv.Itoa(dogId) + "</td><td>" + breed + "</td><td>" + age + "</td><td>" + name + "</td></tr>" // <--- EDIT THIS LINE
+			table += "<tr><td>" + strconv.Itoa(dogId) + "</td><td>" + breed + "</td><td>" + strconv.Itoa(age) + "</td><td>" + name + "</td></tr>" // <--- EDIT THIS LINE
 		}
 		// finally, close out the body and table
 		table += "</tbody></table>"
@@ -109,11 +109,11 @@ func main() {
 		// once you've added all the columns in, close the header
 		table += "</thead><tbody>"
 		// columns
-		
+		var AVG(age) int
 		for rows.Next() {
 			// rows.Scan() // put columns here prefaced with &
-
-			table += "<tr><td>" + AVGage + "</td></tr>" // <--- EDIT THIS LINE
+			rows.Scan(&AVG(age))
+			table += "<tr><td>" + strconv(AVG(age)) + "</td></tr>" // <--- EDIT THIS LINE
 		}
 		// finally, close out the body and table
 		table += "</tbody></table>"
@@ -123,7 +123,7 @@ func main() {
 	router.GET("/query3", func(c *gin.Context) {
 		table := "<table class='table'><thead><tr>"
 		// put your query here
-		rows, err := db.Query("SELECT dogs.name FROM owner JOIN dogs ON dogs.dogId = owner.dog WHERE dogs.age > 4") // <--- EDIT THIS LINE
+		rows, err := db.Query("SELECT owner.name FROM owner JOIN dogs ON dogs.dogId = owner.dog WHERE dogs.age > 4") // <--- EDIT THIS LINE
 		if err != nil {
 			// careful about returning errors to the user!
 			c.AbortWithError(http.StatusInternalServerError, err)
@@ -150,7 +150,7 @@ func main() {
 	})
 
 	// NO code should go after this line. it won't ever reach that point
-	router.Run(":" + port)
+	router.Run(";" + port)
 }
 
 /*
