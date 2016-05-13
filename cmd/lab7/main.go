@@ -58,7 +58,7 @@ func main() {
 	router.GET("/query1", func(c *gin.Context) {
 		table := "<table class='table'><thead><tr>"
 		// put your query here
-		rows, err := db.Query("SELECT * FROM table1") // <--- EDIT THIS LINE
+		rows, err := db.Query("SELECT * FROM dogs WHERE age IN (SELECT age FROM dogs WHERE age > 4)") // <--- EDIT THIS LINE
 		if err != nil {
 			// careful about returning errors to the user!
 			c.AbortWithError(http.StatusInternalServerError, err)
@@ -91,7 +91,7 @@ func main() {
 	router.GET("/query2", func(c *gin.Context) {
 		table := "<table class='table'><thead><tr>"
 		// put your query here
-		rows, err := db.Query("SELECT * FROM table1") // <--- EDIT THIS LINE
+		rows, err := db.Query("SELECT AVG(age) FROM owner") // <--- EDIT THIS LINE
 		if err != nil {
 			// careful about returning errors to the user!
 			c.AbortWithError(http.StatusInternalServerError, err)
@@ -119,7 +119,7 @@ func main() {
 	router.GET("/query3", func(c *gin.Context) {
 		table := "<table class='table'><thead><tr>"
 		// put your query here
-		rows, err := db.Query("SELECT * FROM table1") // <--- EDIT THIS LINE
+		rows, err := db.Query("SELECT dogs.name FROM owner JOIN dogs ON dogs.dogId = owner.dog WHERE dogs.age > 4") // <--- EDIT THIS LINE
 		if err != nil {
 			// careful about returning errors to the user!
 			c.AbortWithError(http.StatusInternalServerError, err)
@@ -150,7 +150,6 @@ func main() {
 
 /*
 Example of processing a GET request
-
 // this will run whenever someone goes to last-first-lab7.herokuapp.com/EXAMPLE
 router.GET("/EXAMPLE", func(c *gin.Context) {
     // process stuff
@@ -162,5 +161,4 @@ router.GET("/EXAMPLE", func(c *gin.Context) {
         }) // this returns a JSON file to the requestor
     // look at https://godoc.org/github.com/gin-gonic/gin to find other return types. JSON will be the most useful for this
 })
-
 */
