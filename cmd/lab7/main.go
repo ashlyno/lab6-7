@@ -32,7 +32,7 @@ func main() {
 	var errd error
 	// here we want to open a connection to the database using an environemnt variable.
 	// This isn't the best technique, but it is the simplest one for heroku
-	db, errd = sql.Open("postgres", os.Getenv("DATABASE_URL"))
+	db, errd = sql.Open("postgres", os.Getenv("postgres://icgthtqknsidij:7G4yHY2mXCxBdlKd-D7BCnem3W@ec2-107-20-174-127.compute-1.amazonaws.com:5432/df7qh28fe5kof0"))
 	if errd != nil {
 		log.Fatalf("Error opening database: %q", errd)
 	}
@@ -74,14 +74,16 @@ func main() {
 		// once you've added all the columns in, close the header
 		table += "</thead><tbody>"
 		// declare all your RETURNED columns here
-		var id int      // <--- EDIT THESE LINES
-		var name string //<--- ^^^^
+		var dogId int      // <--- EDIT THESE LINES
+		var breed string
+		var age int
+		var name string//<--- ^^^^
 		for rows.Next() {
 			// assign each of them, in order, to the parameters of rows.Scan.
 			// preface each variable with &
-			rows.Scan(&id, &name) // <--- EDIT THIS LINE
+			rows.Scan(&dogId, &breed, &age, &name) // <--- EDIT THIS LINE
 			// can't combine ints and strings in Go. Use strconv.Itoa(int) instead
-			table += "<tr><td>" + strconv.Itoa(id) + "</td><td>" + name + "</td></tr>" // <--- EDIT THIS LINE
+			table += "<tr><td>" + strconv.Itoa(dogId) + "</td><td>" + breed + "</td><td>" + age + "</td><td>" + name + "</td></tr>" // <--- EDIT THIS LINE
 		}
 		// finally, close out the body and table
 		table += "</tbody></table>"
@@ -107,9 +109,11 @@ func main() {
 		// once you've added all the columns in, close the header
 		table += "</thead><tbody>"
 		// columns
+		var AVGage
 		for rows.Next() {
 			// rows.Scan() // put columns here prefaced with &
-			table += "<tr><td></td></tr>" // <--- EDIT THIS LINE
+			rows.Scan(&AVGage)
+			table += "<tr><td>" + AVGage + "</td></tr>" // <--- EDIT THIS LINE
 		}
 		// finally, close out the body and table
 		table += "</tbody></table>"
@@ -136,8 +140,9 @@ func main() {
 		table += "</thead><tbody>"
 		// columns
 		for rows.Next() {
+			rows.Scan(&name)
 			// rows.Scan() // put columns here prefaced with &
-			table += "<tr><td></td></tr>" // <--- EDIT THIS LINE
+			table += "<tr><td>" + name + "</td></tr>" // <--- EDIT THIS LINE
 		}
 		// finally, close out the body and table
 		table += "</tbody></table>"
