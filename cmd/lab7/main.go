@@ -113,7 +113,7 @@ func main() {
 		for rows.Next() {
 			// rows.Scan() // put columns here prefaced with &
 			rows.Scan(&AVGage)
-			table += "<tr><td>" + strconv.itoa(AVGage) + "</td></tr>" // <--- EDIT THIS LINE
+			table += "<tr><td></td></tr>" // <--- EDIT THIS LINE
 		}
 		// finally, close out the body and table
 		table += "</tbody></table>"
@@ -139,6 +139,7 @@ func main() {
 		// once you've added all the columns in, close the header
 		table += "</thead><tbody>"
 		// columns
+		var name string
 		for rows.Next() {
 			rows.Scan(&name)
 			// rows.Scan() // put columns here prefaced with &
