@@ -32,7 +32,7 @@ func main() {
 	var errd error
 	// here we want to open a connection to the database using an environemnt variable.
 	// This isn't the best technique, but it is the simplest one for heroku
-	db, errd = sql.Open("postgres", os.Getenv("postgres://icgthtqknsidij:7G4yHY2mXCxBdlKd-D7BCnem3W@ec2-107-20-174-127.compute-1.amazonaws.com:5432/df7qh28fe5kof0"))
+	db, errd = sql.Open("postgres", os.Getenv("DATABASE_URL"))
 	if errd != nil {
 		log.Fatalf("Error opening database: %q", errd)
 	}
@@ -58,7 +58,7 @@ func main() {
 	router.GET("/query1", func(c *gin.Context) {
 		table := "<table class='table'><thead><tr>"
 		// put your query here
-		rows, err := db.Query("SELECT * FROM dogs WHERE age IN (SELECT age FROM dogs WHERE age > 4)") // <--- EDIT THIS LINE
+		rows, err := db.Query("SELECT * FROM table1") // <--- EDIT THIS LINE
 		if err != nil {
 			// careful about returning errors to the user!
 			c.AbortWithError(http.StatusInternalServerError, err)
@@ -74,87 +74,83 @@ func main() {
 		// once you've added all the columns in, close the header
 		table += "</thead><tbody>"
 		// declare all your RETURNED columns here
-		var dogId int      // <--- EDIT THESE LINES
-		var breed string
-		var age int
-		var name string//<--- ^^^^
+		var id int      // <--- EDIT THESE LINES
+		var name string //<--- ^^^^
 		for rows.Next() {
 			// assign each of them, in order, to the parameters of rows.Scan.
 			// preface each variable with &
-			rows.Scan(&dogId, &breed, &age, &name) // <--- EDIT THIS LINE
+			rows.Scan(&id, &name) // <--- EDIT THIS LINE
 			// can't combine ints and strings in Go. Use strconv.Itoa(int) instead
-			table += "<tr><td>" + strconv.Itoa(dogId) + "</td><td>" + breed + "</td><td>" + strconv.Itoa(age) + "</td><td>" + name + "</td></tr>" // <--- EDIT THIS LINE
+			table += "<tr><td>" + strconv.Itoa(id) + "</td><td>" + name + "</td></tr>" // <--- EDIT THIS LINE
 		}
 		// finally, close out the body and table
 		table += "</tbody></table>"
 		c.Data(http.StatusOK, "text/html", []byte(table))
 	})
 
-		// router.GET("/query2", func(c *gin.Context) {
-		// 	table := "<table class='table'><thead><tr>"
-		// 	// put your query here
-		// 	rows, err := db.Query("SELECT AVG(age) FROM owner") // <--- EDIT THIS LINE
-		// 	if err != nil {
-		// 		// careful about returning errors to the user!
-		// 		c.AbortWithError(http.StatusInternalServerError, err)
-		// 	}
-		// 	// foreach loop over rows.Columns, using value
-		// 	cols, _ := rows.Columns()
-		// 	if len(cols) == 0 {
-		// 		c.AbortWithStatus(http.StatusNoContent)
-		// 	}
-		// 	for _, value := range cols {
-		// 		table += "<th class='text-center'>" + value + "</th>"
-		// 	}
-		// 	// once you've added all the columns in, close the header
-		// 	table += "</thead><tbody>"
-		// 	// columns
-		// 	var AVGage int
-		// 	for rows.Next() {
-		// 		// rows.Scan() // put columns here prefaced with &
-		// 		rows.Scan(&AVGage)
-		// 		table += "<tr><td>" + strconv.ItoA(AVGage) + "</td></tr>" // <--- EDIT THIS LINE
-		// 	}
-		// 	// finally, close out the body and table
-		// 	table += "</tbody></table>"
-		// 	c.Data(http.StatusOK, "text/html", []byte(table))
-		// })
+	router.GET("/query2", func(c *gin.Context) {
+		table := "<table class='table'><thead><tr>"
+		// put your query here
+		rows, err := db.Query("SELECT * FROM table1") // <--- EDIT THIS LINE
+		if err != nil {
+			// careful about returning errors to the user!
+			c.AbortWithError(http.StatusInternalServerError, err)
+		}
+		// foreach loop over rows.Columns, using value
+		cols, _ := rows.Columns()
+		if len(cols) == 0 {
+			c.AbortWithStatus(http.StatusNoContent)
+		}
+		for _, value := range cols {
+			table += "<th class='text-center'>" + value + "</th>"
+		}
+		// once you've added all the columns in, close the header
+		table += "</thead><tbody>"
+		// columns
+		for rows.Next() {
+			// rows.Scan() // put columns here prefaced with &
+			table += "<tr><td></td></tr>" // <--- EDIT THIS LINE
+		}
+		// finally, close out the body and table
+		table += "</tbody></table>"
+		c.Data(http.StatusOK, "text/html", []byte(table))
+	})
 
-	// router.GET("/query3", func(c *gin.Context) {
-	// 	table := "<table class='table'><thead><tr>"
-	// 	// put your query here
-	// 	rows, err := db.Query("SELECT owner.name FROM owner JOIN dogs ON dogs.dogId = owner.dog WHERE dogs.age > 4") // <--- EDIT THIS LINE
-	// 	if err != nil {
-	// 		// careful about returning errors to the user!
-	// 		c.AbortWithError(http.StatusInternalServerError, err)
-	// 	}
-	// 	// foreach loop over rows.Columns, using value
-	// 	cols, _ := rows.Columns()
-	// 	if len(cols) == 0 {
-	// 		c.AbortWithStatus(http.StatusNoContent)
-	// 	}
-	// 	for _, value := range cols {
-	// 		table += "<th class='text-center'>" + value + "</th>"
-	// 	}
-	// 	// once you've added all the columns in, close the header
-	// 	table += "</thead><tbody>"
-	// 	// columns
-	// 	for rows.Next() {
-	// 		rows.Scan(&name)
-	// 		// rows.Scan() // put columns here prefaced with &
-	// 		table += "<tr><td>" + name + "</td></tr>" // <--- EDIT THIS LINE
-	// 	}
-	// 	// finally, close out the body and table
-	// 	table += "</tbody></table>"
-	// 	c.Data(http.StatusOK, "text/html", []byte(table))
-	// })
+	router.GET("/query3", func(c *gin.Context) {
+		table := "<table class='table'><thead><tr>"
+		// put your query here
+		rows, err := db.Query("SELECT * FROM table1") // <--- EDIT THIS LINE
+		if err != nil {
+			// careful about returning errors to the user!
+			c.AbortWithError(http.StatusInternalServerError, err)
+		}
+		// foreach loop over rows.Columns, using value
+		cols, _ := rows.Columns()
+		if len(cols) == 0 {
+			c.AbortWithStatus(http.StatusNoContent)
+		}
+		for _, value := range cols {
+			table += "<th class='text-center'>" + value + "</th>"
+		}
+		// once you've added all the columns in, close the header
+		table += "</thead><tbody>"
+		// columns
+		for rows.Next() {
+			// rows.Scan() // put columns here prefaced with &
+			table += "<tr><td></td></tr>" // <--- EDIT THIS LINE
+		}
+		// finally, close out the body and table
+		table += "</tbody></table>"
+		c.Data(http.StatusOK, "text/html", []byte(table))
+	})
 
 	// NO code should go after this line. it won't ever reach that point
-	router.Run(";" + port)
+	router.Run(":" + port)
 }
 
 /*
 Example of processing a GET request
+
 // this will run whenever someone goes to last-first-lab7.herokuapp.com/EXAMPLE
 router.GET("/EXAMPLE", func(c *gin.Context) {
     // process stuff
@@ -166,4 +162,5 @@ router.GET("/EXAMPLE", func(c *gin.Context) {
         }) // this returns a JSON file to the requestor
     // look at https://godoc.org/github.com/gin-gonic/gin to find other return types. JSON will be the most useful for this
 })
+
 */
