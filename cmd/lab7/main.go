@@ -113,7 +113,7 @@ func main() {
 		for rows.Next() {
 			// rows.Scan() // put columns here prefaced with &
 			rows.Scan(&AVGage)
-			table += "<tr><td>" + AVGage + "</td></tr>" // <--- EDIT THIS LINE
+			table += "<tr><td>" + strconv.Itoa(AVGage) + "</td></tr>" // <--- EDIT THIS LINE
 		}
 		// finally, close out the body and table
 		table += "</tbody></table>"
